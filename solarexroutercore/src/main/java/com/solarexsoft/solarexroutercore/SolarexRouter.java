@@ -1,10 +1,19 @@
 package com.solarexsoft.solarexroutercore;
 
+import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.core.app.ActivityCompat;
+
+import com.solarexsoft.solarexrouter.annotation.model.RouteMeta;
+import com.solarexsoft.solarexroutercore.callback.NavigationCallback;
+import com.solarexsoft.solarexroutercore.exception.RouteNotFoundException;
+import com.solarexsoft.solarexroutercore.template.IProvider;
 import com.solarexsoft.solarexroutercore.template.IRouteGroup;
 import com.solarexsoft.solarexroutercore.template.IRouteRoot;
 import com.solarexsoft.solarexroutercore.utils.FindClassesUtils;
@@ -95,5 +104,89 @@ public class SolarexRouter {
         } else {
             return new PostCard(path, group);
         }
+    }
+
+    protected Object navigation(Context context, PostCard postCard, int requestCode, NavigationCallback callback) {
+        try {
+            prepareCard(postCard);
+        } catch (RouteNotFoundException e) {
+            e.printStackTrace();
+            if (callback != null) {
+                callback.onLost(postCard);
+            }
+            return null;
+        }
+        if (callback != null) {
+            callback.onFound(postCard);
+        }
+        switch (postCard.getJumpType()) {
+            case ACTIVITY:
+                Context currentContext = context == null ? mContext : context;
+                Intent intent = new Intent(currentContext, postCard.getDestination());
+                intent.putExtras(postCard.getExtras());
+                int flags = postCard.getFlags();
+                if (flags != -1) {
+                    if (!(currentContext instanceof Activity)) {
+                        flags |= Intent.FLAG_ACTIVITY_NEW_TASK;
+                    }
+                    intent.setFlags(flags);
+                } else {
+                    if (!(currentContext instanceof Activity)) {
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    }
+                }
+                if (requestCode > 0) {
+                    ActivityCompat.startActivityForResult((Activity)currentContext, intent, requestCode, postCard.getOptionsCompat());
+                } else {
+                    ActivityCompat.startActivity(currentContext, intent, postCard.getOptionsCompat());
+                }
+                if (postCard.getEnterAnim() != 0 && postCard.getExitAnim() != 0 && currentContext instanceof Activity) {
+                    ((Activity) currentContext).overridePendingTransition(postCard.getEnterAnim(), postCard.getExitAnim());
+                }
+                if (callback != null) {
+                    callback.onArrival(postCard);
+                }
+                return null;
+            case PROVIDER:
+                Class<?> destination = postCard.getDestination();
+                IProvider providerInstance = RouteTableHolder.providers.get(destination);
+                if (providerInstance == null) {
+                    try {
+                        providerInstance = (IProvider) destination.newInstance();
+                        RouteTableHolder.providers.put(destination, providerInstance);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                postCard.setProvider(providerInstance);
+                return postCard.getProvider();
+        }
+        return null;
+    }
+
+    private void prepareCard(PostCard postCard) {
+        RouteMeta routeMeta = RouteTableHolder.singleGroupRoutes.get(postCard.getPath());
+        if (routeMeta == null) {
+            Class<? extends IRouteGroup> groupMetaClz = RouteTableHolder.groupRouteIndex.get(postCard.getGroup());
+            if (groupMetaClz == null) {
+                throw new RouteNotFoundException("error find route info for path: " + postCard.getPath() + ", group: " + postCard.getGroup());
+            }
+            IRouteGroup groupInstance;
+            try {
+                groupInstance = groupMetaClz.newInstance();
+            } catch (Exception e) {
+                throw new RuntimeException("error instance group route table for path: " + postCard.getPath(), e);
+            }
+            groupInstance.loadInto(RouteTableHolder.singleGroupRoutes);
+            RouteTableHolder.groupRouteIndex.remove(postCard.getGroup());
+            prepareCard(postCard);
+        } else {
+            postCard.setDestination(routeMeta.getDestination());
+            postCard.setJumpType(routeMeta.getJumpType());
+        }
+    }
+
+    public void injectExtras(Activity activity) {
+        ExtraManager.getInstance().loadExtras(activity);
     }
 }

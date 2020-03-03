@@ -42,6 +42,10 @@ public class PostCard extends RouteMeta {
         return this.bundle;
     }
 
+    public Bundle getOptionsCompat() {
+        return this.optionsCompat;
+    }
+
     public int getEnterAnim() {
         return enterAnim;
     }

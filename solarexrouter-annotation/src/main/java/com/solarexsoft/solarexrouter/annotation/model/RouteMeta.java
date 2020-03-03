@@ -40,6 +40,14 @@ public class RouteMeta {
         this.group = group;
     }
 
+    public void setJumpType(JumpType jumpType) {
+        this.jumpType = jumpType;
+    }
+
+    public void setDestination(Class<?> destination) {
+        this.destination = destination;
+    }
+
     public JumpType getJumpType() {
         return jumpType;
     }
