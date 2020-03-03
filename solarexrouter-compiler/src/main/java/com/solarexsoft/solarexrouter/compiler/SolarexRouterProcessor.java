@@ -97,6 +97,21 @@ public class SolarexRouterProcessor extends AbstractProcessor {
             }
             categories(routeMeta);
         }
+
+        TypeElement iRouteGroup = elementUtils.getTypeElement(Constants.IROUTE_GROUP);
+        TypeElement iRouteRoot = elementUtils.getTypeElement(Constants.IROUTE_ROOT);
+
+        generateGroup(iRouteGroup);
+
+        generateRoot(iRouteRoot, iRouteGroup);
+    }
+
+    private void generateRoot(TypeElement iRouteRoot, TypeElement iRouteGroup) {
+        
+    }
+
+    private void generateGroup(TypeElement iRouteGroup) {
+
     }
 
     private void categories(RouteMeta routeMeta) {
