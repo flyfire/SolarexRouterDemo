@@ -159,6 +159,10 @@ public class SolarexRouter {
                     }
                 }
                 postCard.setProvider(providerInstance);
+                /*
+                if (callback != null) {
+                    callback.onArrival(postCard);
+                }*/
                 return postCard.getProvider();
         }
         return null;
