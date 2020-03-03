@@ -1,5 +1,7 @@
 package com.solarexsoft.solarexrouter.annotation.model;
 
+import com.solarexsoft.solarexrouter.annotation.SolarexRouter;
+
 import javax.lang.model.element.Element;
 
 /**
@@ -30,6 +32,10 @@ public class RouteMeta {
         this.destination = destination;
         this.path = path;
         this.group = group;
+    }
+
+    public RouteMeta(JumpType jumpType, Element element, SolarexRouter router) {
+        this(jumpType, element, null, router.path(), router.group());
     }
 
     public void setPath(String path) {

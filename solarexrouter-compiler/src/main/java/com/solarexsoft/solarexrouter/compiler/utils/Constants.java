@@ -16,6 +16,9 @@ public class Constants {
     public static final String IROUTE_GROUP = "com.solarexsoft.solarexroutercore.template.IRouteGroup";
     public static final String IROUTE_ROOT = "com.solarexsoft.solarexroutercore.template.IRouteRoot";
     public static final String IEXTRA = "com.solarexsoft.solarexroutercore.template.IExtra";
+    public static final String IPROVIDER = "com.solarexsoft.solarexroutercore.template.IProvider";
+
+    public static final String ACTIVITY = "android.app.Activity";
 
     public static final String METHOD_LOAD_INTO = "loadInto";
     public static final String METHOD_LOAD_EXTRA = "loadExtra";
