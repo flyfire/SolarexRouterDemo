@@ -16,7 +16,7 @@ public class Log {
     private Log(Messager messager) {
         this.messager = messager;
     }
-    public Log newLog(Messager messager) {
+    public static Log newLog(Messager messager) {
         return new Log(messager);
     }
 
