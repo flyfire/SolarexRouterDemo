@@ -11,9 +11,11 @@ import com.solarexsoft.solarexroutercore.thread.FindClassesThreadPoolExecutor;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -40,9 +42,8 @@ public class FindClassesUtils {
         return sourcePaths;
     }
 
-    public static ConcurrentMap<String, Object> findClassNamesByPackageName(Application context, final String packageName) throws PackageManager.NameNotFoundException, InterruptedException {
-        ConcurrentMap<String, Object> classNames = new ConcurrentHashMap<>();
-        Object DUMB_OBJ = new Object();
+    public static Set<String> findClassNamesByPackageName(Application context, final String packageName) throws PackageManager.NameNotFoundException, InterruptedException {
+        final Set<String> classNames = Collections.synchronizedSet(new HashSet<String>());
         List<String> sourcePaths = getSourcePaths(context);
         final CountDownLatch countDownLatch = new CountDownLatch(sourcePaths.size());
         ThreadPoolExecutor threadPoolExecutor = FindClassesThreadPoolExecutor.newThreadPoolExecutor(sourcePaths.size());
@@ -53,6 +54,13 @@ public class FindClassesUtils {
                     DexFile dexFile = null;
                     try {
                         dexFile = new DexFile(sourcePath);
+                        Enumeration<String> entries = dexFile.entries();
+                        while (entries.hasMoreElements()) {
+                            String element = entries.nextElement();
+                            if (element.startsWith(packageName)) {
+                                classNames.add(element);
+                            }
+                        }
                     } catch (IOException e) {
                         e.printStackTrace();
                     } finally {
