@@ -1,0 +1,5 @@
+rootProject.name='SolarexRouterDemo'
+include ':app'
+include ':base'
+include ':moudlea'
+include ':moudleb'

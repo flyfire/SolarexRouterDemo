@@ -1,0 +1,26 @@
+ext {
+    // true: 集成模式
+    // false: 独立组件模式
+    isMoudleA = true
+    isMoudleB = true
+
+    android = [
+            compileSdkVersion: 29,
+            buildToolsVersion: "29.0.2",
+            minSdkVersion    : 21,
+            targetSdkVersion : 29,
+            versionCode      : 1,
+            versionName      : "1.0"
+    ]
+
+    appIds = [
+            "app" : "com.solarexsoft.solarexrouterdemo",
+            "moudleA" : "com.solarexsoft.moudlea",
+            "moudleB" : "com.solarexsoft.moudleb"
+    ]
+
+    compatVersion = "1.1.0"
+    libraries = [
+            "appcompat" : "androidx.appcompat:appcompat:${compatVersion}"
+    ]
+}
