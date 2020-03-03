@@ -22,11 +22,21 @@ public class RouteMeta {
     private String path;
     private String group;
 
+    public RouteMeta(){}
+
     public RouteMeta(JumpType jumpType, Element element, Class<?> destination, String path, String group) {
         this.jumpType = jumpType;
         this.element = element;
         this.destination = destination;
         this.path = path;
+        this.group = group;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public void setGroup(String group) {
         this.group = group;
     }
 
