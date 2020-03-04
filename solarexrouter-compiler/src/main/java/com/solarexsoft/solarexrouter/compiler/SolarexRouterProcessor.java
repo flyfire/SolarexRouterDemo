@@ -6,7 +6,14 @@ import com.solarexsoft.solarexrouter.annotation.model.RouteMeta;
 import com.solarexsoft.solarexrouter.compiler.utils.Constants;
 import com.solarexsoft.solarexrouter.compiler.utils.Log;
 import com.solarexsoft.solarexrouter.compiler.utils.Utils;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeSpec;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +30,7 @@ import javax.annotation.processing.SupportedOptions;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
@@ -77,7 +85,7 @@ public class SolarexRouterProcessor extends AbstractProcessor {
         return false;
     }
 
-    private void parseRouters(Set<? extends Element> routeElements) {
+    private void parseRouters(Set<? extends Element> routeElements) throws IOException {
         TypeElement activity = elementUtils.getTypeElement(Constants.ACTIVITY);
         TypeMirror activityType = activity.asType();
         TypeElement provider = elementUtils.getTypeElement(Constants.IPROVIDER);
@@ -107,11 +115,52 @@ public class SolarexRouterProcessor extends AbstractProcessor {
     }
 
     private void generateRoot(TypeElement iRouteRoot, TypeElement iRouteGroup) {
-        
+
     }
 
-    private void generateGroup(TypeElement iRouteGroup) {
+    private void generateGroup(TypeElement iRouteGroup) throws IOException {
+        ParameterizedTypeName atlas = ParameterizedTypeName.get(
+                ClassName.get(Map.class),
+                ClassName.get(String.class),
+                ClassName.get(RouteMeta.class)
+        );
+        ParameterSpec groupParamSpec = ParameterSpec.builder(atlas, "atlas").build();
 
+        for (Map.Entry<String, List<RouteMeta>> entry : groupRouteMap.entrySet()) {
+            MethodSpec.Builder loadIntoMethodOfGroupBuilder = MethodSpec
+                    .methodBuilder(Constants.METHOD_LOAD_INTO)
+                    .addAnnotation(Override.class)
+                    .addModifiers(Modifier.PUBLIC)
+                    .addParameter(groupParamSpec);
+
+            String groupName = entry.getKey();
+            List<RouteMeta> groupData = entry.getValue();
+            for (RouteMeta routeMeta : groupData) {
+                loadIntoMethodOfGroupBuilder
+                        .addStatement("atlas.put($S, $T.build($T.$L, $T.class, $S, $S);",
+                                routeMeta.getPath(),
+                                ClassName.get(RouteMeta.class),
+                                ClassName.get(RouteMeta.JumpType.class),
+                                routeMeta.getJumpType(),
+                                ClassName.get((TypeElement) routeMeta.getElement()),
+                                routeMeta.getPath().toLowerCase(),
+                                routeMeta.getGroup().toLowerCase()
+                        );
+            }
+            String groupClassName = Constants.ROUTE_GROUP_NAME + groupName;
+            JavaFile.builder(Constants.ROUTE_PACKAGE_NAME,
+                    TypeSpec
+                            .classBuilder(groupClassName)
+                            .addSuperinterface(ClassName.get(iRouteGroup))
+                            .addModifiers(Modifier.PUBLIC)
+                            .addMethod(loadIntoMethodOfGroupBuilder.build())
+                            .build())
+                    .build()
+                    .writeTo(filerUtils);
+            log.i("Generated RouteGroup: " + Constants.ROUTE_PACKAGE_NAME + "." + groupClassName);
+
+            rootRouteMap.put(groupName, groupClassName);
+        }
     }
 
     private void categories(RouteMeta routeMeta) {

@@ -34,6 +34,10 @@ public class RouteMeta {
         this.group = group;
     }
 
+    public static RouteMeta build(JumpType jumpType, Class<?> destination, String path, String group) {
+        return new RouteMeta(jumpType, null, destination, path, group);
+    }
+
     public RouteMeta(JumpType jumpType, Element element, SolarexRouter router) {
         this(jumpType, element, null, router.path(), router.group());
     }
