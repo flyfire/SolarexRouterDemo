@@ -15,6 +15,12 @@ android {
         versionName cfg.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [moduleName : project.getName()]
+            }
+        }
     }
 
     buildTypes {

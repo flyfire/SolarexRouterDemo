@@ -36,6 +36,12 @@ android {
                 }
             }
         }
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [moduleName : project.getName()]
+            }
+        }
     }
 
     buildTypes {
