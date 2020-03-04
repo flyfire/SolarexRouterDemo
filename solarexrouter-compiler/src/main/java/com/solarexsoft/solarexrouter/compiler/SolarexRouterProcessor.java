@@ -12,6 +12,7 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.WildcardTypeName;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -114,8 +115,40 @@ public class SolarexRouterProcessor extends AbstractProcessor {
         generateRoot(iRouteRoot, iRouteGroup);
     }
 
-    private void generateRoot(TypeElement iRouteRoot, TypeElement iRouteGroup) {
+    private void generateRoot(TypeElement iRouteRoot, TypeElement iRouteGroup) throws IOException {
+        // Map<String, Class<? extends IRouteGroup>>
+        ParameterizedTypeName routes = ParameterizedTypeName.get(
+                ClassName.get(Map.class),
+                ClassName.get(String.class),
+                ParameterizedTypeName.get(
+                        ClassName.get(Class.class),
+                        WildcardTypeName.subtypeOf(ClassName.get(iRouteGroup))
+                )
+        );
 
+        ParameterSpec rootParamSpec = ParameterSpec.builder(routes, "routes").build();
+
+        MethodSpec.Builder loadIntoMethodOfRootBuilder = MethodSpec
+                .methodBuilder(Constants.METHOD_LOAD_INTO)
+                .addAnnotation(Override.class)
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(rootParamSpec);
+
+        for (Map.Entry<String, String> entry : rootRouteMap.entrySet()) {
+            loadIntoMethodOfRootBuilder.addStatement("routes.put($S, $T.class);",
+                    entry.getKey(),
+                    ClassName.get(Constants.ROUTE_PACKAGE_NAME, entry.getValue()));
+        }
+
+        String rootClassName = Constants.ROUTE_ROOT_NAME + moduleName;
+        JavaFile.builder(Constants.ROUTE_PACKAGE_NAME,
+                TypeSpec.classBuilder(rootClassName)
+                        .addModifiers(Modifier.PUBLIC)
+                        .addSuperinterface(ClassName.get(iRouteRoot))
+                        .addMethod(loadIntoMethodOfRootBuilder.build())
+                        .build())
+                .build().writeTo(filerUtils);
+        log.i("Generated RouteRoot: " + Constants.ROUTE_PACKAGE_NAME + "." + rootClassName);
     }
 
     private void generateGroup(TypeElement iRouteGroup) throws IOException {
