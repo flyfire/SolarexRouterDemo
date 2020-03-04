@@ -1,5 +1,7 @@
 package com.solarexsoft.solarexrouter.compiler.utils;
 
+import com.squareup.javapoet.ClassName;
+
 /**
  * <pre>
  *    Author: houruhou
@@ -9,6 +11,8 @@ package com.solarexsoft.solarexrouter.compiler.utils;
  */
 
 public class Constants {
+
+    public static final ClassName ROUTER = ClassName.get("com.solarexsoft.solarexroutercore", "SolarexRouter");
     public static final String ARGUMENTS_NAME = "moduleName";
     public static final String ANN_TYPE_ROUTE = "com.solarexsoft.solarexrouter.annotation.SolarexRouter";
     public static final String ANN_TYPE_EXTRA = "com.solarexsoft.solarexrouter.annotation.SolarexExtra";
@@ -19,6 +23,7 @@ public class Constants {
     public static final String IPROVIDER = "com.solarexsoft.solarexroutercore.template.IProvider";
 
     public static final String ACTIVITY = "android.app.Activity";
+    public static final String PARCELABLE = "android.os.Parcelable";
 
     public static final String METHOD_LOAD_INTO = "loadInto";
     public static final String METHOD_LOAD_EXTRA = "loadExtra";

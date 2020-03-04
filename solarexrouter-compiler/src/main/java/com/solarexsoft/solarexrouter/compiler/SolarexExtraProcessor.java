@@ -3,9 +3,16 @@ package com.solarexsoft.solarexrouter.compiler;
 import com.google.auto.service.AutoService;
 import com.solarexsoft.solarexrouter.annotation.SolarexExtra;
 import com.solarexsoft.solarexrouter.compiler.utils.Constants;
+import com.solarexsoft.solarexrouter.compiler.utils.LoadExtraBuilder;
 import com.solarexsoft.solarexrouter.compiler.utils.Log;
 import com.solarexsoft.solarexrouter.compiler.utils.Utils;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.ParameterSpec;
+import com.squareup.javapoet.TypeName;
+import com.squareup.javapoet.TypeSpec;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +28,9 @@ import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
@@ -70,8 +79,39 @@ public class SolarexExtraProcessor extends AbstractProcessor {
         return false;
     }
 
-    private void generateAutoInject() {
+    private void generateAutoInject() throws IOException {
+        TypeMirror activity = elementUtils.getTypeElement(Constants.ACTIVITY).asType();
+        TypeElement iExtra = elementUtils.getTypeElement(Constants.IEXTRA);
 
+        // Object target;
+        ParameterSpec targetParamSpec = ParameterSpec.builder(TypeName.OBJECT, "target").build();
+        if (!Utils.isEmpty(extraEnclosingElementMap)) {
+            for (Map.Entry<TypeElement, List<Element>> entry : extraEnclosingElementMap.entrySet()) {
+                TypeElement enclosingClass = entry.getKey();
+                if (!typeUtils.isSubtype(enclosingClass.asType(), activity)) {
+                    throw new RuntimeException("Only support activity field : " + enclosingClass);
+                }
+                LoadExtraBuilder loadExtraBuilder = new LoadExtraBuilder(targetParamSpec);
+                loadExtraBuilder.setElementUtils(elementUtils);
+                loadExtraBuilder.setTypeUtils(typeUtils);
+                ClassName className = ClassName.get(enclosingClass);
+                loadExtraBuilder.injectTarget(className);
+
+                for (int i = 0; i < entry.getValue().size(); i++) {
+                    Element element = entry.getValue().get(i);
+                    loadExtraBuilder.buildStatement(element);
+                }
+
+                String extraClassName = enclosingClass.getSimpleName() + Constants.ROUTE_EXTRA_NAME;
+                JavaFile.builder(className.packageName(),
+                        TypeSpec.classBuilder(extraClassName)
+                                .addSuperinterface(ClassName.get(iExtra))
+                                .addModifiers(Modifier.PUBLIC)
+                                .addMethod(loadExtraBuilder.build()).build())
+                        .build().writeTo(filerUtils);
+                log.i("Generated Extra: " + className.packageName() + "." + extraClassName);
+            }
+        }
     }
 
     private void categories(Set<? extends Element> elements) {
