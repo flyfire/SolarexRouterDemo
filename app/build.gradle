@@ -16,6 +16,9 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
+        buildConfigField("boolean","isModuleA",String.valueOf(rootProject.ext.isMoudleA))
+        buildConfigField("boolean","isModuleB",String.valueOf(rootProject.ext.isMoudleB))
+
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = [moduleName : project.getName()]

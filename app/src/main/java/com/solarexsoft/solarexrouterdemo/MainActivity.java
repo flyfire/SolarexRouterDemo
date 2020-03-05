@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,9 +33,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (id == R.id.btn_demoextra) {
             jumpDemoExtra();
         } else if (id == R.id.btn_modulea) {
-
+            if (BuildConfig.isModuleA) {
+                SolarexRouterCore.getInstance().build("/modulea/demo").navigation();
+            } else {
+                Toast.makeText(this, "独立模式", Toast.LENGTH_SHORT).show();
+            }
         } else if (id == R.id.btn_moduleb) {
-
+            if (BuildConfig.isModuleB) {
+                SolarexRouterCore.getInstance().build("/moduleb/demo").navigation();
+            } else {
+                Toast.makeText(this, "独立模式", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

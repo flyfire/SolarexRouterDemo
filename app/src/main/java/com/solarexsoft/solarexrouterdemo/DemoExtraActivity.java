@@ -88,6 +88,7 @@ public class DemoExtraActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_demoextra);
         SolarexRouterCore.getInstance().injectExtras(this);
         TextView textView = findViewById(R.id.tv);
         textView.setText(toString());
