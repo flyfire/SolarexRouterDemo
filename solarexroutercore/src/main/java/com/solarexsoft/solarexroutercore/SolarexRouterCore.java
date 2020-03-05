@@ -29,8 +29,8 @@ import java.util.Set;
  * </pre>
  */
 
-public class SolarexRouter {
-    private static final String TAG = "SolarexRouter";
+public class SolarexRouterCore {
+    private static final String TAG = "SolarexRouterCore";
     private static final String ROUTE_ROOT_PACKAGE_NAME = "com.solarexsoft.router.routes";
     private static final String ROUTE_PREFIX_NAME = "SolarexRouter";
     private static final String SEPARATOR = "$$";
@@ -38,20 +38,20 @@ public class SolarexRouter {
     private boolean debug = false;
 
     private static Application mContext;
-    private static volatile SolarexRouter instance;
+    private static volatile SolarexRouterCore instance;
 
-    private SolarexRouter() {
+    private SolarexRouterCore() {
     }
 
     public void openDebug() {
         debug = true;
     }
 
-    public static SolarexRouter getInstance() {
+    public static SolarexRouterCore getInstance() {
         if (instance == null) {
-            synchronized (SolarexRouter.class) {
+            synchronized (SolarexRouterCore.class) {
                 if (instance == null) {
-                    instance = new SolarexRouter();
+                    instance = new SolarexRouterCore();
                 }
             }
         }

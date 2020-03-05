@@ -39,6 +39,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     implementation project(path: ':base')
+    annotationProcessor project(":solarexrouter-compiler")
 
     if (isMoudleA) {
         implementation project(path: ':moudlea')
