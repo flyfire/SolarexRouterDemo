@@ -15,6 +15,11 @@ public class DemoParcelable implements Parcelable {
     private int id;
     private String text;
 
+    public DemoParcelable(int id, String text) {
+        this.id = id;
+        this.text = text;
+    }
+
     @Override
     public int describeContents() {
         return 0;
