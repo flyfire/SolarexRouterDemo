@@ -1,12 +1,15 @@
 package com.solarexsoft.solarexroutercore;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.widget.AutoCompleteTextView;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityOptionsCompat;
 
 import com.solarexsoft.solarexrouter.annotation.model.RouteMeta;
+import com.solarexsoft.solarexroutercore.callback.NavigationCallback;
 import com.solarexsoft.solarexroutercore.template.IProvider;
 
 import java.util.ArrayList;
@@ -202,5 +205,24 @@ public class PostCard extends RouteMeta {
         this.bundle.putStringArrayList(key, value);
         return this;
     }
-    
+
+    public Object navigation() {
+        return SolarexRouter.getInstance().navigation(null, this, -1, null);
+    }
+
+    public Object navigation(Context context) {
+        return SolarexRouter.getInstance().navigation(context, this, -1, null)
+    }
+
+    public Object navigation(Context context, int requestCode) {
+        return SolarexRouter.getInstance().navigation(context, this, requestCode, null);
+    }
+
+    public Object navigation(Context context, NavigationCallback callback) {
+        return SolarexRouter.getInstance().navigation(context, this, -1, callback);
+    }
+
+    public Object navigation(Context context, int requestCode, NavigationCallback callback) {
+        return SolarexRouter.getInstance().navigation(context, this, requestCode, callback);
+    }
 }
