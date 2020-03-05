@@ -28,6 +28,7 @@ public class ModuleAActivity extends AppCompatActivity implements View.OnClickLi
         findViewById(R.id.btn_jump_main).setOnClickListener(this);
         findViewById(R.id.btn_jump_moduleb).setOnClickListener(this);
         findViewById(R.id.btn_call_main).setOnClickListener(this);
+        findViewById(R.id.btn_jump_inner).setOnClickListener(this);
     }
 
     @Override
@@ -51,6 +52,8 @@ public class ModuleAActivity extends AppCompatActivity implements View.OnClickLi
             } else {
                 Toast.makeText(this, "独立模式", Toast.LENGTH_SHORT).show();
             }
+        } else if (id == R.id.btn_jump_inner) {
+            SolarexRouterCore.getInstance().build("/modulea/inner").navigation();
         }
     }
 }

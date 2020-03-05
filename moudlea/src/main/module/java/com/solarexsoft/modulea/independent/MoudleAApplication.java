@@ -2,6 +2,8 @@ package com.solarexsoft.modulea.independent;
 
 import android.app.Application;
 
+import com.solarexsoft.solarexroutercore.SolarexRouterCore;
+
 /**
  * <pre>
  *    Author: houruhou
@@ -11,4 +13,9 @@ import android.app.Application;
  */
 
 public class MoudleAApplication extends Application {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        SolarexRouterCore.getInstance().init(this);
+    }
 }

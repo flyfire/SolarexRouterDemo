@@ -2,7 +2,9 @@
     package="com.solarexsoft.moudlea" >
 
     <application
-        android:name="com.solarexsoft.modulea.independent.MoudleAApplication">
+        android:name="com.solarexsoft.modulea.independent.MoudleAApplication"
+        android:allowBackup="true"
+        android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
         <activity android:name=".ModuleAActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -10,5 +12,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ModuleAInnerActivity" />
     </application>
 </manifest>

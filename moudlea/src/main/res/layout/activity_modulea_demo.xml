@@ -19,4 +19,9 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:text="call main"/>
+    <Button
+        android:id="@+id/btn_jump_inner"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="jump inner"/>
 </LinearLayout>
