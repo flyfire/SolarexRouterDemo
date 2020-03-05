@@ -170,7 +170,7 @@ public class SolarexRouterProcessor extends AbstractProcessor {
             List<RouteMeta> groupData = entry.getValue();
             for (RouteMeta routeMeta : groupData) {
                 loadIntoMethodOfGroupBuilder
-                        .addStatement("atlas.put($S, $T.build($T.$L, $T.class, $S, $S);",
+                        .addStatement("atlas.put($S, $T.build($T.$L, $T.class, $S, $S));",
                                 routeMeta.getPath(),
                                 ClassName.get(RouteMeta.class),
                                 ClassName.get(RouteMeta.JumpType.class),

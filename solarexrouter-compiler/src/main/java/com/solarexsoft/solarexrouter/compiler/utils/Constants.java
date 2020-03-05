@@ -26,7 +26,7 @@ public class Constants {
     public static final String PARCELABLE = "android.os.Parcelable";
 
     public static final String METHOD_LOAD_INTO = "loadInto";
-    public static final String METHOD_LOAD_EXTRA = "loadExtra";
+    public static final String METHOD_LOAD_EXTRA = "injectExtra";
 
     private static final String LANG = "java.lang.";
     public static final String BYTE = LANG + "Byte";
