@@ -3,7 +3,6 @@ package com.solarexsoft.solarexroutercore;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.widget.AutoCompleteTextView;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityOptionsCompat;
@@ -211,7 +210,7 @@ public class PostCard extends RouteMeta {
     }
 
     public Object navigation(Context context) {
-        return SolarexRouter.getInstance().navigation(context, this, -1, null)
+        return SolarexRouter.getInstance().navigation(context, this, -1, null);
     }
 
     public Object navigation(Context context, int requestCode) {
