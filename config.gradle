@@ -1,7 +1,7 @@
 ext {
     // true: 集成模式
     // false: 独立组件模式
-    isMoudleA = false
+    isMoudleA = true
     isMoudleB = true
 
     android = [

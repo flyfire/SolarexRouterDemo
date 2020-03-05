@@ -3,5 +3,6 @@
 
     <application>
         <activity android:name=".ModuleAActivity" />
+        <activity android:name=".ModuleAInnerActivity" />
     </application>
 </manifest>
